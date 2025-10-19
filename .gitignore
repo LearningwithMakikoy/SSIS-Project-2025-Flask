@@ -1,0 +1,47 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.py.class
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# --- Virtual Environments ---
+.venv/
+venv/
+env/
+ENV/
+
+# --- Flask / Instance ---
+instance/
+*.db
+*.sqlite3
+
+# --- Environment Files ---
+.env
+.env.*
+!.env_sample
+.flaskenv
+
+# --- IDE / Editor ---
+.vscode/
+.idea/
+
+# --- OS Files ---
+.DS_Store
+Thumbs.db
+
+# --- Logs ---
+*.log
+
+# --- Pipenv / Poetry ---
+Pipfile.lock
+poetry.lock
+
+# --- Cache ---
+*.cache
+__pycache__/
