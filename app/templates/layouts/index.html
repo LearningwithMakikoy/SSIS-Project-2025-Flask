@@ -1,0 +1,52 @@
+{% extends 'layouts/base.html' %}
+{% block title %}Dashboard - SIS{% endblock %}
+
+{% block content %}
+<div class="text-center my-5">
+  <h1 class="display-1 fw-bold">for settings</h1>
+</div>
+
+<div class="row gx-4 gy-4 justify-content-center align-items-stretch">
+  <div class="col-md-4">
+    <div class="card card-feature student-card h-100">
+      <div class="card-body d-flex flex-column justify-content-between">
+        <div class="d-flex justify-content-between">
+          <h2 class="fw-bold">student</h2>
+          <i class="fa fa-users fa-4x"></i>
+        </div>
+        <div class="mt-3 text-center">
+          <a class="btn btn-outline-light btn-lg" href="{{ url_for('students') }}">student info</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card card-feature program-card h-100">
+      <div class="card-body d-flex flex-column justify-content-between">
+        <div class="d-flex justify-content-between">
+          <h2 class="fw-bold">program</h2>
+          <i class="fa fa-graduation-cap fa-4x"></i>
+        </div>
+        <div class="mt-3 text-center">
+          <a class="btn btn-outline-light btn-lg" href="#">program info</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card card-feature college-card h-100">
+      <div class="card-body d-flex flex-column justify-content-between">
+        <div class="d-flex justify-content-between">
+          <h2 class="fw-bold">college</h2>
+          <i class="fa fa-university fa-4x"></i>
+        </div>
+        <div class="mt-3 text-center">
+          <a class="btn btn-outline-light btn-lg" href="#">college info</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
