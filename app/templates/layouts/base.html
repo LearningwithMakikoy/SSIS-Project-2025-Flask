@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
   {% block head %}{% endblock %}
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
 
   <!-- top nav (matches screenshot: home, student, program, college, admin icon) -->
   <header class="site-header">
@@ -33,7 +33,7 @@
     </nav>
   </header>
 
-  <main class="container py-5">
+  <main class="container py-5 flex-grow-1 d-flex align-items-center justify-content-center">
     {% block content %}{% endblock %}
   </main>
 
