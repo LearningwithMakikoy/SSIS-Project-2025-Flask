@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, render_template
 from .database import db, init_db
 from flask_migrate import Migrate
 from flask_login import LoginManager
@@ -34,6 +34,9 @@ def create_app():
     # root route
     @app.route('/')
     def home():
-        return app.send_static_file('index.html') if False else ("<p>Go to <a href='/user/'>/user/</a></p>")
+        # app.send_static_file serves files from the static folder (not templates).
+        # The earlier placeholder returned a plain string so no template was rendered.
+        # Render the template located at app/templates/layouts/index.html instead.
+        return render_template('layouts/index.html')
 
     return app
