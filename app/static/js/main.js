@@ -148,7 +148,7 @@
     if (!el) return;
     el.value = value;
   }
-
+ 
   // Form submit (Add or Edit)
   if (form) {
     form.addEventListener('submit', (ev) => {
@@ -158,7 +158,7 @@
 
       // Basic validation
       if (!payload.roll || !payload.name) {
-        alert('Please enter at least Roll and Name.');
+        alert('Please enter all details such as ID Number and Name...');
         return;
       }
 

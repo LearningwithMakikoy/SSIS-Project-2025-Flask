@@ -21,5 +21,9 @@ def login():
 def admin_create():
     return render_template('layouts/admin_create.html')
 
+@app.route('/programs')
+def programs():
+    return render_template('layouts/programs.html')
+
 if __name__ == '__main__':
     app.run(debug=True)
