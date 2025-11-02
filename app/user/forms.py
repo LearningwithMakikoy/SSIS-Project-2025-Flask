@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SelectField, SubmitField
+from wtforms import StringField, SelectField, SubmitField, HiddenField
 from wtforms.validators import DataRequired, Length, Regexp
 
 
@@ -9,6 +9,7 @@ class ProgramForm(FlaskForm):
 	Note: set `form.college_id.choices = [(c.id, c.name) for c in colleges]` in the view
 	before validating/rendering so the select displays available colleges.
 	"""
+	id = HiddenField('id')
 	code = StringField('Code', validators=[DataRequired(), Length(max=10)])
 	name = StringField('Name', validators=[DataRequired(), Length(max=100)])
 	# choices must be populated by the view: form.college_id.choices = [(id, name), ...]
@@ -18,6 +19,7 @@ class ProgramForm(FlaskForm):
 
 class CollegeForm(FlaskForm):
 	"""Form for creating / editing a College."""
+	id = HiddenField('id')
 	code = StringField('Code', validators=[DataRequired(), Length(max=10)])
 	name = StringField('Name', validators=[DataRequired(), Length(max=100)])
 	submit = SubmitField('Save')
@@ -37,8 +39,9 @@ class StudentForm(FlaskForm):
 			form = StudentForm()
 			form.program_id.choices = [(p.id, p.name) for p in Program.query.order_by(Program.name).all()]
 		"""
+		id = HiddenField('id')
 		id_number = StringField('Student ID', validators=[DataRequired(), Length(max=50),
-																										 Regexp(r'^\d{4}-\d{4}$', message='Use format YYYY-NNNN')])
+																	 Regexp(r'^\d{4}-\d{4}$', message='Use format YYYY-NNNN')])
 		first_name = StringField('First name', validators=[DataRequired(), Length(max=100)])
 		last_name = StringField('Last name', validators=[DataRequired(), Length(max=100)])
 		# populate choices in the view: form.program_id.choices = [(id, name), ...]

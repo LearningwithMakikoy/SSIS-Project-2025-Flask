@@ -111,3 +111,11 @@
 
 </div>
 {% endblock %}
+
+{% block scripts %}
+<script>
+  window.INIT_STUDENTS = {{ students|tojson | safe }} || [];
+  window.INIT_PROGRAMS = {{ programs|tojson | safe }} || [];
+</script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+{% endblock %}

@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const form = document.getElementById('collegeForm');
   const tbody = document.getElementById('colleges-table-body');
   const searchInput = document.getElementById('college-search');
-  let colleges = [];
+  let colleges = window.INIT_COLLEGES || [];
   let editIndex = null;
 
   function renderTable(list = colleges) {
@@ -24,19 +24,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  form.addEventListener('submit', function(e) {
-    e.preventDefault();
-    const data = Object.fromEntries(new FormData(form).entries());
-    if (editIndex === null) {
-      colleges.push(data);
-    } else {
-      colleges[editIndex] = data;
-      editIndex = null;
-    }
-    form.reset();
-    renderTable();
-    bootstrap.Modal.getInstance(document.querySelector('#collegeModal')).hide();
-  });
+  // Let the form submit normally to the server (server handles create/edit)
 
   tbody.addEventListener('click', function(e) {
     const btn = e.target.closest('button');
@@ -45,14 +33,34 @@ document.addEventListener('DOMContentLoaded', function() {
     const action = btn.dataset.action;
 
     if (action === 'delete') {
-      if (confirm(`Delete college ${colleges[index].name}?`)) {
-        colleges.splice(index, 1);
-        renderTable();
-      }
+      const college = colleges[index];
+      if (!college) return;
+      if (!confirm(`Delete college ${college.name}?`)) return;
+      const csrfToken = document.querySelector('input[name="csrf_token"]')?.value;
+      fetch(`/user/colleges/delete/${college.id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrfToken || ''
+        }
+      }).then(r => r.json()).then(data => {
+        if (data && data.success) {
+          colleges.splice(index, 1);
+          renderTable();
+          showAlert('success', data.message || 'College deleted');
+        } else {
+          showAlert('danger', (data && data.message) || 'Failed to delete college');
+        }
+      }).catch(err => {
+        console.error(err);
+        showAlert('danger', 'Failed to delete college');
+      });
     } else if (action === 'edit') {
       const college = colleges[index];
-      for (const key in college) {
-        if (form.elements[key]) form.elements[key].value = college[key];
+      if (form) {
+        if (form.elements['id']) form.elements['id'].value = college.id || '';
+        if (form.elements['code']) form.elements['code'].value = college.code || '';
+        if (form.elements['name']) form.elements['name'].value = college.name || '';
       }
       editIndex = index;
       new bootstrap.Modal(document.querySelector('#collegeModal')).show();
@@ -68,13 +76,21 @@ document.addEventListener('DOMContentLoaded', function() {
     renderTable(filtered);
   });
 
-  // Initial sample data
-  colleges = [
-    { code: 'CCS', name: 'College of Computer Studies' },
-    { code: 'COE', name: 'College of Engineering' },
-    { code: 'CBAA', name: 'College of Business Administration and Accountancy' },
-    { code: 'CAS', name: 'College of Arts and Sciences' }
-  ];
+  function showAlert(type, message) {
+    try {
+      const container = document.querySelector('.container') || document.body;
+      const existing = document.querySelector('.dynamic-alert');
+      if (existing) existing.remove();
+      const div = document.createElement('div');
+      div.className = `alert alert-${type} alert-dismissible dynamic-alert`;
+      div.role = 'alert';
+      div.innerHTML = `${message}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+      container.insertBefore(div, container.firstChild);
+      setTimeout(() => div.remove(), 4000);
+    } catch (e) {
+      console.warn('showAlert failed', e);
+    }
+  }
 
   renderTable();
 });

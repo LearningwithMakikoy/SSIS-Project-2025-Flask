@@ -20,8 +20,13 @@
 
   async function loadData() {
     try {
-      const res = await fetch(DATA_URL);
-      students = await res.json();
+      // prefer server-provided initial data injected into the page
+      if (window.INIT_STUDENTS) {
+        students = window.INIT_STUDENTS.slice();
+      } else {
+        const res = await fetch(DATA_URL);
+        students = await res.json();
+      }
       filtered = students.slice();
       renderTable();
       renderPagination();
@@ -50,11 +55,14 @@
     for (const s of pageItems) {
       const tr = document.createElement('tr');
 
+      // show id_number, first_name, last_name, program, year, gender
       tr.innerHTML = `
-        <td><a href="#" class="student-roll-link" data-id="${s.id}">${escapeHtml(s.roll)}</a></td>
-        <td>${escapeHtml(s.name)}</td>
-        <td>${escapeHtml(s.semester)}</td>
-        <td>${escapeHtml(s.department)}</td>
+        <td><a href="#" class="student-roll-link" data-id="${s.id}">${escapeHtml(s.id_number || '')}</a></td>
+        <td>${escapeHtml(s.first_name || '')}</td>
+        <td>${escapeHtml(s.last_name || '')}</td>
+        <td>${escapeHtml(s.program || '')}</td>
+        <td>${escapeHtml(String(s.year || ''))}</td>
+        <td>${escapeHtml(s.gender || '')}</td>
         <td>
           <button class="btn btn-sm btn-outline-primary btn-edit" data-id="${s.id}">Edit</button>
           <button class="btn btn-sm btn-outline-danger btn-delete" data-id="${s.id}">Delete</button>
@@ -116,13 +124,13 @@
     currentEditId = id;
     // fill form
     form.reset();
-    setFormValue('roll', student.roll || '');
-    setFormValue('name', student.name || '');
-    setFormValue('email', student.email || '');
-    setFormValue('sex', student.sex || '');
-    setFormValue('semester', student.semester || '');
-    setFormValue('department', student.department || '');
-    setFormValue('address', student.address || '');
+    setFormValue('id', student.id || '');
+    setFormValue('id_number', student.id_number || '');
+    setFormValue('first_name', student.first_name || '');
+    setFormValue('last_name', student.last_name || '');
+    setFormValue('program_id', student.program_id || '');
+    setFormValue('year', student.year || '');
+    setFormValue('gender', student.gender || '');
     if (bsModal) bsModal.show();
   }
 
@@ -131,15 +139,32 @@
     const id = Number(e.currentTarget.dataset.id);
     const student = students.find(s => s.id === id);
     if (!student) return;
-    if (!confirm(`Delete ${student.name} (${student.roll})? This is frontend-only.`)) return;
-    // delete in-memory
-    students = students.filter(s => s.id !== id);
-    filtered = filtered.filter(s => s.id !== id);
-    // adjust page if necessary
-    const maxPage = Math.max(1, Math.ceil(filtered.length / pageSize));
-    if (currentPage > maxPage) currentPage = maxPage;
-    renderTable();
-    renderPagination();
+    if (!confirm(`Delete ${student.first_name} ${student.last_name} (${student.id_number})?`)) return;
+    // call server delete endpoint (uses CSRF token from the page)
+    const csrfToken = document.querySelector('input[name="csrf_token"]')?.value;
+    fetch(`/user/students/delete/${id}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrfToken || ''
+      }
+    }).then(r => r.json()).then(data => {
+      if (data && data.success) {
+        // remove locally and refresh UI
+        students = students.filter(s => s.id !== id);
+        filtered = filtered.filter(s => s.id !== id);
+        const maxPage = Math.max(1, Math.ceil(filtered.length / pageSize));
+        if (currentPage > maxPage) currentPage = maxPage;
+        renderTable();
+        renderPagination();
+        showAlert('success', data.message || 'Student deleted');
+      } else {
+        showAlert('danger', (data && data.message) || 'Failed to delete student');
+      }
+    }).catch(err => {
+      console.error(err);
+      showAlert('danger', 'Failed to delete student');
+    });
   }
 
   // Form helpers
@@ -149,59 +174,7 @@
     el.value = value;
   }
  
-  // Form submit (Add or Edit)
-  if (form) {
-    form.addEventListener('submit', (ev) => {
-      ev.preventDefault();
-      const data = new FormData(form);
-      const payload = Object.fromEntries(data.entries());
-
-      // Basic validation
-      if (!payload.roll || !payload.name) {
-        alert('Please enter all details such as ID Number and Name...');
-        return;
-      }
-
-      if (currentEditId == null) {
-        // add new
-        const newId = (students.length ? Math.max(...students.map(s => s.id)) : 0) + 1;
-        const newStudent = {
-          id: newId,
-          roll: payload.roll,
-          name: payload.name,
-          semester: payload.semester || '',
-          department: payload.department || '',
-          email: payload.email || '',
-          sex: payload.sex || '',
-          address: payload.address || ''
-        };
-        students.unshift(newStudent);    // add to top
-      } else {
-        // update existing
-        const idx = students.findIndex(s => s.id === currentEditId);
-        if (idx !== -1) {
-          students[idx] = {
-            ...students[idx],
-            roll: payload.roll,
-            name: payload.name,
-            semester: payload.semester || '',
-            department: payload.department || '',
-            email: payload.email || '',
-            sex: payload.sex || '',
-            address: payload.address || ''
-          };
-        }
-        currentEditId = null;
-      }
-
-      // reset and close modal
-      form.reset();
-      if (bsModal) bsModal.hide();
-      // refresh filtered & UI
-      applySearch();
-      renderPagination();
-    });
-  }
+  // We no longer intercept form submit; forms post to the server for create/edit.
 
   // Search
   function applySearch() {
@@ -210,9 +183,10 @@
       filtered = students.slice();
     } else {
       filtered = students.filter(s =>
-        (s.name && s.name.toLowerCase().includes(q)) ||
-        (s.roll && s.roll.toLowerCase().includes(q)) ||
-        (s.department && s.department.toLowerCase().includes(q))
+        (s.first_name && s.first_name.toLowerCase().includes(q)) ||
+        (s.last_name && s.last_name.toLowerCase().includes(q)) ||
+        (s.id_number && s.id_number.toLowerCase().includes(q)) ||
+        (s.program && s.program.toLowerCase().includes(q))
       );
     }
     currentPage = 1;
@@ -235,6 +209,23 @@
       .replaceAll('>', '&gt;')
       .replaceAll('"', '&quot;')
       .replaceAll("'", '&#39;');
+  }
+
+  function showAlert(type, message) {
+    try {
+      const container = document.querySelector('.container') || document.body;
+      const existing = document.querySelector('.dynamic-alert');
+      if (existing) existing.remove();
+      const div = document.createElement('div');
+      div.className = `alert alert-${type} alert-dismissible dynamic-alert`;
+      div.role = 'alert';
+      div.innerHTML = `${escapeHtml(message)}<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+      container.insertBefore(div, container.firstChild);
+      // auto-dismiss after 4s
+      setTimeout(() => div.remove(), 4000);
+    } catch (e) {
+      console.warn('showAlert failed', e);
+    }
   }
 
   // init on DOMContentLoaded
