@@ -14,3 +14,13 @@ def index():
 @bp.route('/programs')
 def programs():
     return render_template('layouts/programs.html')
+
+@bp.route('/colleges')
+def colleges():
+    return render_template('layouts/colleges.html')
+
+
+@bp.route('/students')
+def students():
+    return render_template('layouts/students.html')
+

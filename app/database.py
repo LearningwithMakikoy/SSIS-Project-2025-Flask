@@ -1,18 +1,20 @@
 # app/database.py
 from flask_sqlalchemy import SQLAlchemy
-import os
 from dotenv import load_dotenv
+import os
 
-load_dotenv()  # Load environment variables from .env file
+load_dotenv()
 
 db = SQLAlchemy()
 
 def init_db(app):
-    # PostgreSQL connection URI
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv(
-        'DATABASE_URL',
-        'postgresql://postgres:yourpassword@localhost/yourdbname'  # fallback
-    )
-    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    user = os.getenv('DB_USERNAME')
+    password = os.getenv('DB_PASSWORD')
+    host = os.getenv('DB_HOST', 'localhost')
+    port = os.getenv('DB_PORT', 5432)
+    name = os.getenv('DB_NAME')
 
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{user}:{password}@{host}:{port}/{name}'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
+
