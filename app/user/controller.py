@@ -1,8 +1,16 @@
-# app/controller.py
-from flask import Blueprint, render_template
+"""User blueprint routes."""
+from flask import render_template
 
-main = Blueprint('main', __name__)
+# import the blueprint object from this package
+from . import bp
 
-@main.route('/')
+
+@bp.route('/')
 def index():
-    return render_template('index.html')
+    # templates are in app/templates/layouts/
+    return render_template('layouts/index.html')
+
+
+@bp.route('/programs')
+def programs():
+    return render_template('layouts/programs.html')
