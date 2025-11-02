@@ -14,6 +14,16 @@
     </div>
   </div>
 
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  <div class="mb-3">
+    {% for category, msg in messages %}
+      <div class="alert alert-{{ category }}" role="alert">{{ msg }}</div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% endwith %}
+
   <div class="card mx-auto" style="max-width:1000px;">
     <div class="card-body p-0">
       <table class="table table-hover mb-0">
@@ -37,29 +47,27 @@
 <div class="modal fade" id="programModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <form id="programForm">
+      <form id="programForm" method="post">
+        {{ form.hidden_tag() }}
         <div class="modal-header">
           <h5 class="modal-title">Program Information</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
           <div class="mb-3">
-            <label class="form-label">Program Code</label>
-            <input class="form-control" name="code" placeholder="e.g. BSCS" required>
+            {{ form.code.label(class="form-label") }}
+            {{ form.code(class="form-control", placeholder="e.g. BSCS") }}
+            {% for err in form.code.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
           </div>
           <div class="mb-3">
-            <label class="form-label">Program Name</label>
-            <input class="form-control" name="name" placeholder="e.g. Bachelor of Science in Computer Science" required>
+            {{ form.name.label(class="form-label") }}
+            {{ form.name(class="form-control", placeholder="e.g. Bachelor of Science in Computer Science") }}
+            {% for err in form.name.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
           </div>
           <div class="mb-3">
-            <label class="form-label">College</label>
-            <select class="form-select" name="college" required>
-              <option value="">-- Select College --</option>
-              <option value="CCS">College of Computer Studies</option>
-              <option value="COE">College of Engineering</option>
-              <option value="CAS">College of Arts & Sciences</option>
-              <option value="CBAA">College of Business Administration and Accountancy</option>
-            </select>
+            {{ form.college_id.label(class="form-label") }}
+            {{ form.college_id(class="form-select") }}
+            {% for err in form.college_id.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
           </div>
         </div>
         <div class="modal-footer">

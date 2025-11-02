@@ -20,6 +20,16 @@
   </div>
   </div>
 
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  <div class="mb-3">
+    {% for category, msg in messages %}
+      <div class="alert alert-{{ category }}" role="alert">{{ msg }}</div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% endwith %}
+
   <div class="card mx-auto" style="max-width:1000px;">
   <div class="card-body p-0">
     <div class="table-responsive">
@@ -52,7 +62,8 @@
 <div class="modal fade" id="studentModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <form id="studentForm" class="needs-validation" novalidate>
+      <form id="studentForm" method="post">
+        {{ form.hidden_tag() }}
         <div class="modal-header">
           <h5 class="modal-title">Student Information</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -60,45 +71,34 @@
         <div class="modal-body">
           <div class="row g-3">
             <div class="col-md-6">
-              <label class="form-label">ID Number (YYYY-NNNN)</label>
-              <input class="form-control" name="ID" placeholder="ID Number" required>
+              {{ form.id_number.label(class="form-label") }}
+              {{ form.id_number(class="form-control", placeholder="2023-1234") }}
+              {% for err in form.id_number.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
             </div>
             <div class="col-md-6">
-              <label class="form-label">First Name</label>
-              <input class="form-control" name="Fname" placeholder="First Name" required>
+              {{ form.first_name.label(class="form-label") }}
+              {{ form.first_name(class="form-control", placeholder="First name") }}
+              {% for err in form.first_name.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
             </div>
             <div class="col-md-6">
-              <label class="form-label">Last Name</label>
-              <input class="form-control" name="Lname" placeholder="Last Name">
+              {{ form.last_name.label(class="form-label") }}
+              {{ form.last_name(class="form-control", placeholder="Last name") }}
+              {% for err in form.last_name.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
             </div>
             <div class="col-md-6">
-              <label class="form-label">Gender</label>
-              <select class="form-select" name="gender">
-                <option value="">--Select--</option>
-                <option>Male</option>
-                <option>Female</option>
-                <option>Other</option>
-              </select>
+              {{ form.gender.label(class="form-label") }}
+              {{ form.gender(class="form-select") }}
+              {% for err in form.gender.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
             </div>
             <div class="col-md-6">
-              <label class="form-label">Year</label>
-              <select class="form-select" name="year">
-                <option value="">--Select--</option>
-                <option>1st</option>
-                <option>2nd</option>
-                <option>3rd</option>
-                <option>4th</option>
-              </select>
+              {{ form.year.label(class="form-label") }}
+              {{ form.year(class="form-select") }}
+              {% for err in form.year.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
             </div>
             <div class="col-md-6">
-              <label class="form-label">Course</label>
-              <select class="form-select" name="course">
-                <option value="">--Select--</option>
-                <option>CS</option>
-                <option>ECE</option>
-                <option>IT</option>
-                <option>ME</option>
-              </select>
+              {{ form.program_id.label(class="form-label") }}
+              {{ form.program_id(class="form-select") }}
+              {% for err in form.program_id.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
             </div>
         <div class="modal-footer">
           <button class="btn btn-secondary" data-bs-dismiss="modal">Close</button>

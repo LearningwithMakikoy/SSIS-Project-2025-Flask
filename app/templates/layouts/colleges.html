@@ -14,6 +14,16 @@
     </div>
   </div>
 
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  <div class="mb-3">
+    {% for category, msg in messages %}
+      <div class="alert alert-{{ category }}" role="alert">{{ msg }}</div>
+    {% endfor %}
+  </div>
+  {% endif %}
+  {% endwith %}
+
   <div class="card mx-auto" style="max-width:1000px;">
     <div class="card-body p-0">
       <div class="table-responsive">
@@ -44,19 +54,22 @@
 <div class="modal fade" id="collegeModal" tabindex="-1" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
-      <form id="collegeForm">
+      <form id="collegeForm" method="post">
+        {{ form.hidden_tag() }}
         <div class="modal-header">
           <h5 class="modal-title">College Information</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
           <div class="mb-3">
-            <label class="form-label">College Code</label>
-            <input class="form-control" name="code" placeholder="e.g., CCS" required>
+            {{ form.code.label(class="form-label") }}
+            {{ form.code(class="form-control", placeholder="e.g., CCS") }}
+            {% for err in form.code.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
           </div>
           <div class="mb-3">
-            <label class="form-label">College Name</label>
-            <input class="form-control" name="name" placeholder="e.g., College of Computer Studies" required>
+            {{ form.name.label(class="form-label") }}
+            {{ form.name(class="form-control", placeholder="e.g., College of Computer Studies") }}
+            {% for err in form.name.errors %}<div class="text-danger small">{{ err }}</div>{% endfor %}
           </div>
         </div>
         <div class="modal-footer">

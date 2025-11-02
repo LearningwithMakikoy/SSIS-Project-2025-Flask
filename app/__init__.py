@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, Blueprint, redirect, url_for, flash, request
 from .database import db, init_db
 from flask_migrate import Migrate
 from flask_login import LoginManager
@@ -39,7 +39,4 @@ def create_app():
         # Render the template located at app/templates/layouts/index.html instead.
         return render_template('layouts/index.html')
 
-def students():
-    form = StudentForm
-    
     return app
