@@ -39,4 +39,7 @@ def create_app():
         # Render the template located at app/templates/layouts/index.html instead.
         return render_template('layouts/index.html')
 
+def students():
+    form = StudentForm
+    
     return app
