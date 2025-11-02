@@ -83,7 +83,7 @@
 {% endblock %}
 
 <script>
-  window.INIT_COLLEGES = {{ colleges|tojson | safe }} || [];
+  window.INIT_COLLEGES = {{ (colleges or [])|tojson|safe }};
 </script>
 
 {% block scripts %}

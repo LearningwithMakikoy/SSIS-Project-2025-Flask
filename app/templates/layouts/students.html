@@ -114,8 +114,8 @@
 
 {% block scripts %}
 <script>
-  window.INIT_STUDENTS = {{ students|tojson | safe }} || [];
-  window.INIT_PROGRAMS = {{ programs|tojson | safe }} || [];
+  window.INIT_STUDENTS = {{ (students or [])|tojson|safe }};
+  window.INIT_PROGRAMS = {{ (programs or [])|tojson|safe }};
 </script>
 <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 {% endblock %}

@@ -81,8 +81,8 @@
 {% endblock %}
 
 <script>
-  window.INIT_PROGRAMS = {{ programs|tojson | safe }} || [];
-  window.INIT_COLLEGES = {{ colleges|tojson | safe }} || [];
+  window.INIT_PROGRAMS = {{ (programs or [])|tojson|safe }};
+  window.INIT_COLLEGES = {{ (colleges or [])|tojson|safe }};
 </script>
 
 {% block scripts %}
