@@ -1,0 +1,48 @@
+{% extends 'layouts/base.html' %}
+{% block title %}Dashboard - SIS{% endblock %}
+
+{% block content %}
+
+<div class="container">
+  <div class="row gx-4 gy-4 justify-content-center">
+  <div class="col-md-4">
+    <div class="card card-feature student-card h-100">
+      <div class="card-body d-flex flex-column align-items-center text-center">
+        <h2 class="fw-bold mb-2">student</h2>
+        <i class="fa fa-users fa-4x mb-3" aria-hidden="true"></i>
+        <div class="mt-2">
+          <a class="btn btn-outline-light btn-lg" href="{{ url_for('user.students') }}">student info</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card card-feature program-card h-100">
+      <div class="card-body d-flex flex-column align-items-center text-center">
+        <h2 class="fw-bold mb-2">program</h2>
+        <i class="fa fa-graduation-cap fa-4x mb-3" aria-hidden="true"></i>
+        <div class="mt-2">
+          <a class="btn btn-outline-light btn-lg" href="{{ url_for('user.programs') }}">program info</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card card-feature college-card h-100">
+      <div class="card-body d-flex flex-column align-items-center text-center">
+        <h2 class="fw-bold mb-2">college</h2>
+        <i class="fa fa-university fa-4x mb-3" aria-hidden="true"></i>
+        <div class="mt-2">
+          <a class="btn btn-outline-light btn-lg" href="{{ url_for('user.colleges') }}">college info</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,7 +1,7 @@
 from app import create_app
-import os
 
+# Use the application factory so blueprints and extensions are configured
 app = create_app()
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     app.run(debug=True)

@@ -1,0 +1,24 @@
+{% extends 'layouts/base.html' %}
+{% block title %}Login - SIS{% endblock %}
+
+{% block content %}
+<div class="d-flex flex-column align-items-center">
+  <h1 class="display-2 fw-bold mb-4">Student Information System</h1>
+
+  <div class="login-card p-5 rounded-3 text-center">
+    <div class="mb-4 avatar-placeholder rounded-circle"></div>
+
+    <form class="w-100" method="post" action="{{ url_for('login') }}">
+      <div class="mb-3">
+        <input type="text" class="form-control form-control-lg rounded-pill" placeholder="Username" name="username">
+      </div>
+      <div class="mb-1">
+        <input type="password" class="form-control form-control-lg rounded-pill" placeholder="Password" name="password">
+      </div>
+
+      <div class="mb-3 small text-muted">Forgot Password?</div>
+      <button class="btn btn-success btn-lg px-5 rounded-pill">Login</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
